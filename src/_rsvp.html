@@ -1,0 +1,748 @@
+<div class="section rsvp" data-anchor="rsvp">
+  <div class="title">
+    <h1>RSVP</h1>
+    <hr>
+  </div>
+  <div class="form">
+    <div class="form-section">
+      <span>I,</span>
+      <select class="name-select"></select>
+      <select class="attend-select">
+        <option></option>
+        <option value="attending">Am attending the whole shebang!</option>
+        <option value="not-attending">Will not attend and will forever regret this decision.</option>
+      </select>
+    </div>
+    <div class="form-section wants-date" style="display: none;">
+      <select class="wants-date-select">
+        <option></option>
+        <option value="yes">I'd love a wedding buddy!</option>
+        <option value="no">I'd prefer to fly solo.</option>
+      </select>
+    </div>
+    <div class="form-section date-name" style="display: none;">
+      <span>My date's name is</span>
+      <input type="text" placeholder="Name">
+    </div>
+    <div class="form-section accomodations" style="display: none;">
+      <span>I will be hanging my hat at</span>
+      <input type="text" placeholder="Where you are staying">
+    </div>
+    <div class="form-section song-name" style="display: none;">
+      <span>You'll find me on the dance floor when they play</span>
+      <input type="text" placeholder="Song name">
+    </div>
+    <button class="submit pure-button-disabled pure-button">Submit</button>
+  </div>
+  <div class="thank-you happy" style="display: none">
+    <p> Thank you for the RSVP! We are so excited to see you soon!</p>
+    <img src="/images/happy-mojo.jpg">
+  </div>
+  <div class="thank-you sad" style="display: none">
+    <p> Thank you for the RSVP! We are going to miss you!</p>
+    <img src="/images/sad-mojo.jpg" >
+  </div>
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var formValues = {
+      name: null,
+      status: null,
+      dateName: null,
+      accomodations: null,
+      song: null
+    },
+    wantsDate = undefined,
+    rsvp = null;
+    var language = {
+       "noResults": function(){
+           return "";
+       }
+   };
+    var rsvpList = initRsvpList();
+    $('.section.rsvp .name-select').select2({
+      placeholder: "Select your name",
+      data:  rsvpList,
+      language: language,
+      matcher: function(params, data) {
+          var term, text;
+
+          if (!params.term || params.term.length <= 2) {
+            return null;
+          }
+          
+          term = params.term ? params.term.toLowerCase() : null;
+          text = data.text.toLowerCase();
+
+          if (data.isPlaceholder) {
+            return null;
+          }
+
+          if (text.indexOf(term) !== -1) {
+            return data;
+          }
+
+          return null;
+      }
+    }).on('change', function(data) {
+        if (!data.target.value) return;
+        var id = parseInt(data.target.value, 10);
+        rsvp = rsvpList.find(function(rsvp) { return rsvp.id === id });
+        formValues.name = rsvp.text;
+        update();
+    });
+    $('.section.rsvp .name-select').select2('val', '');
+    $('.section.rsvp .attend-select').select2({
+      placeholder: "Select if you are attending",
+      minimumResultsForSearch: Infinity
+    }).on('change', function(data) {
+      formValues.status = data.target.value;
+      update();
+    });
+    $('.section.rsvp .wants-date-select').select2({
+      placeholder: "Are you bringing a date?",
+      minimumResultsForSearch: Infinity
+    }).on('change', function(data) {
+      wantsDate = data.target.value === 'yes';
+      update();
+    });
+    $('.section.rsvp .submit').click(function() {
+        console.debug("Submitting values", formValues);
+        var transformedValues = transformFormToGoogleDocs(formValues);
+        disableSubmit();
+        console.debug("Uploading form", transformedValues);
+        $.post("https://docs.google.com/forms/d/116Wy6bl48nkWbw03qzUfri5FdXCcn2Wpg4Yy8bCm9FE/formResponse", transformedValues).always(function() {
+            if (formValues.status === 'attending') {
+              toggleThankYouHappy();
+            } else {
+              toggleThankYouSad();
+            }
+         });
+    });
+    $('.section.rsvp .date-name input').on('change', function(data) {
+      var name = data.target.value;
+      console.debug("name selected", name);
+      formValues.dateName = name;
+    });
+    $('.section.rsvp .song-name input').on('change', function(data) {
+      var name = data.target.value;
+      formValues.song = name;
+    }); 
+    $('.section.rsvp .accomodations input').on('change', function(data) {
+      var name = data.target.value;
+      formValues.accomodations = name;
+    });
+    function update() {
+      updateDate();
+      updateSubmit();
+      updateSongAndAccomodations();
+    }
+    function disableSubmit() {
+        $('.section.rsvp .submit').addClass('pure-button-disabled');
+    }
+    function enableSubmit() {
+        $('.section.rsvp .submit').removeClass('pure-button-disabled');
+    }
+    function updateSubmit() {
+      if (rsvp && formValues.name && formValues.status) {
+        enableSubmit();
+      } else {
+        disableSubmit();
+      }
+    }
+    function updateSongAndAccomodations() {
+      if (rsvp.hasDate && typeof wantsDate === 'undefined') {
+        return;
+      }
+      if (formValues.status === 'attending') {
+        $(".section.rsvp .accomodations").show();
+        $(".section.rsvp .song-name").show();
+      } else {
+        formValues.accomodations = null;
+        formValues.song = null;
+        $(".section.rsvp .accomodations").hide();
+        $(".section.rsvp .song-name").hide();
+        $(".section.rsvp .accomodations input").val("");
+        $(".section.rsvp .song-name input").val("");
+      }
+    }
+    function transformFormToGoogleDocs(formValues) {
+      return {
+        "entry.267983249": formValues.name,
+        "entry.1688268929": formValues.dateName || "",
+        "entry.71739064": formValues.status === 'attending' ? 'yes' : 'no',
+        "entry.756229184": formValues.song || "",
+        "entry.103264076": formValues.accomodations || ""
+      };
+    }
+    function updateDate() {
+      if (rsvp && rsvp.hasDate && formValues.status === 'attending') {
+        $('.section.rsvp .wants-date').show();
+        if (wantsDate) {
+          $('.section.rsvp .date-name').show();
+        } else {
+          formValues.dateName = null;
+          $('.section.rsvp .date-name').hide();
+          $('.section.rsvp .date-name input').val("")
+        }
+      } else {
+        formValues.dateName = null;
+        wantsDate = undefined;
+        $('.section.rsvp .date-name').hide();
+        $('.section.rsvp .wants-date').hide();
+        $('.section.rsvp .date-name input').val("")
+      }
+    };
+    function toggleThankYouHappy() {
+      $('.section.rsvp .form').hide();
+      $('.section.rsvp .thank-you.sad').hide();
+      $('.section.rsvp .thank-you.happy').show();
+    }
+    function toggleThankYouSad() {
+      $('.section.rsvp .form').hide();
+      $('.section.rsvp .thank-you.sad').show();
+      $('.section.rsvp .thank-you.happy').hide();
+    }
+  });
+  function initRsvpList() { 
+    return [
+  {
+    "Guest name": "Martina Privara & Tomas Vyborcek",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Tal & Rula Almquist",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Joel & Lynn Berkowitz",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Bill, Leeor, Daniella, Talia & Elan Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Bradley & Helen Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Brian & Kristen Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Christina Brahms",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Morgan & Parker Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Brandon & Nadia Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Josh Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Virginia Brahms",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "David Brien",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Sherry Burger",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Eric & Anne Capagrosso",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Brian Cinelli",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Dennis Cinelli & Colleen Coen",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Dennis Cinelli & Linda Cinelli",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Shayna DelRio & Family",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Patty Granato",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Anthony & Diane Michaels",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Daniel Miller",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Mike & Rhonda Miller",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Darren & Gina Reo",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Linda Rudofsky",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Randy Rudofsky",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Konrad Rudofsky",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Raquel Rudofsky",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Scott & Melissa Siegel",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Sue Siegel",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Jason & Kathleen Snyder & Family",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Charles Chuck Turner",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Lawrence & Kristen Baker",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "John & Emily Barker",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Richard & Vicki Belz",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Robert Bergen & Joan Cimaglio",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Lidia Berrocal",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Jospeh & Lisa Calabrese",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Emily Capogrosso",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "James & Luann Clemente",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Michael & Debbie Ferrante",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Chris & Tina Ferro",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Sal Ferro",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Tim & Erin Ferro",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Betty Ferro",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "John & Janice Ferro",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Donna Fisher",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Ronald Youre",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Philippa Hindman",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Trish Kent",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Tommy & Mary Miano",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Joanne Okin",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Bill & Anita Reppert",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Andrew Siegel",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Allan & Carla Shoap",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Donna Turner",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Larry, Lisa & Lena Verga",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Julia Vermillion",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Michael & Laura Koren",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Manju Chinnappa",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Dave & Deb Wright",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Kyle Veater & Chelsea Pinkham",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Sean Saksena",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Jungsun Park",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Brianne McGhee",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Dan Adams & Christine Vineski",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Steve & Lani Vineski",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Adam Hartman",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Kip & Judith Hartman",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "April Saige",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Adam Christ & Judy Vo",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Jonathan Michel & Victoria Berard",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Avinash Chandra & Jennifer Borman",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Devan Conrick & Amy Turner",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Jamie, Soyeon and Sophia Showman",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Sarah Sullivan",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Rodrigo Martinez & Judicita Condezo",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Andrew Nguyen & Nary Sos",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Bob Fendley & Casey Leffue",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Johann & Moushimi Amaya",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Nazly Shafagati",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Alan Baer",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Anthony Ponce",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Pavitra & Niti Shukla",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Alan Dao",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Chhandak Ghorai",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Justin Lehman & Caitlin Woodson",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Danny & Kendria Valle",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Karishma Tharani",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Erin Myers",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Anjan Gnyawali & Sujata Bhattarai",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Sahil Talwar",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Samina Chhatwal",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Fiorella Quesada",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Ama Atobrah",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Lina Garada",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Nisha Gnyawali",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Matthew & Cassall Spencer",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Manish Nagbanshi & Pralisa Amatya",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Katherine Fite",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Allison Candelora",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Meagan Gordon",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Shawn Andrews",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Cole Andrews",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Andrea Teter",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Neha Bansal",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Cara Seligman",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Crystal Day",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Paul Miclat",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "David & Kylene Kehn-Hall",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Aarthi Narayanan",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Jacqueline Houle",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Svetlana Senina",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Carrie Pascoe",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Cynthia de la Fuente",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Lindsay Lundberg",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Todd Bell",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Sid Han",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Gyn Wei",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Courtney Lynn Bush",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Rohan Mathur",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Janette Saige",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Nick Licitra",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Helen Park",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Jason Rubinstein",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Christine Van Duyne",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Eva Oliver",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Sean & Angeli Andrade",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Isabel Smith",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Afrah Hussain",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Sara Abu Shaheen",
+    "Need date?": "Y"
+  },
+  {
+    "Guest name": "Anurag & Mellie Saksena",
+    "Need date?": "N"
+  },
+  {
+    "Guest name": "Alexander Dhu De La Garza",
+    "Need date?": "Y"
+  }
+].map(function(data, idx) {
+  return {
+    id: idx,
+    text: data["Guest name"],
+    hasDate: data["Need date?"] === "Y"
+  }
+});
+}
+</script>
+
+</div>

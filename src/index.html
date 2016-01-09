@@ -1,0 +1,66 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Wedding</title>
+  <meta name="description" content="Chris and Ash's wedding site">
+  <meta name="author" content="Chris Brahms">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.css">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700,400italic">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure.css">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+
+  <!--[if IE]>
+    <script type="text/javascript">
+       var console = { log: function() {} };
+    </script>
+  <![endif]-->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.6/vendors/jquery.easings.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.6/vendors/jquery.slimscroll.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.6/jquery.fullPage.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#fullpage').fullpage({
+        anchors: [       
+        'home', 
+        'people', 
+        'schedule',   
+        'registry', 
+        'date', 
+        'place',  
+        'travel', 
+        'accommodations', 
+        'rsvp'],
+        scrollOverflow: true,
+        scrollBar: true,
+        keyboardScrolling: true
+      });
+    });
+  </script>
+</head>
+
+<body>
+
+
+<div id="header" lc>
+  @@include('./_navbar.html')
+</div>
+<div id="fullpage">
+  @@include('./_home.html')
+  @@include('./_people.html')
+  @@include('./_schedule.html')
+  @@include('./_registry.html')
+  @@include('./_date.html')
+  @@include('./_place.html')
+  @@include('./_travel.html')
+  @@include('./_accommodations.html')
+  @@include('./_rsvp.html')
+</div>  
+</body>
+</html>

@@ -1,0 +1,60 @@
+<div class="section date remove-vertical-align" data-anchor="date">
+    <div class="countdown pure-g">
+      <div class="pure-u-1-5 box-wrapper">
+        <div class="box">
+          <h1 class="weeks">46</h1>
+          <p>Weeks</p>
+        </div>
+      </div>
+      <div class="pure-u-1-5 box-wrapper">
+        <div class="box">
+          <h1 class="days">46</h1>
+          <p>Days</p>
+        </div>
+      </div>
+      <div class="pure-u-1-5 box-wrapper">
+        <div class="box">
+          <h1 class="hours">12</h1>
+          <p>Hours</p>
+        </div>
+      </div>
+      <div class="pure-u-1-5 box-wrapper">
+        <div class="box">
+          <h1 class="minutes">33</h1>
+          <p>Minutes</p>
+        </div>
+      </div>
+      <div class="pure-u-1-5 box-wrapper">
+        <div class="box">
+          <h1 class="seconds">22</h1>
+          <p>Seconds</p>
+        </div>
+      </div>
+    </div>
+
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var weddingTime = window.weddingTime = moment.utc('2016-07-30 21:30');
+    window.setInterval(function() {
+      var nowTime = moment.utc();
+      var weeks = weddingTime.diff(nowTime, 'weeks');
+      nowTime.add(weeks, 'weeks');
+      var days = weddingTime.diff(nowTime, 'days');
+      nowTime.add(days, 'days');
+      var hours = weddingTime.diff(nowTime, 'hours');
+      nowTime.add(hours, 'hours');
+      var minutes = weddingTime.diff(nowTime, 'minutes');
+      nowTime.add(minutes, 'minutes');
+      var seconds = weddingTime.diff(nowTime, 'seconds');
+      $('.section.date .weeks').text(weeks);
+      $('.section.date .days').text(days);
+      $('.section.date .hours').text(hours);
+      $('.section.date .minutes').text(minutes);
+      $('.section.date .seconds').text(seconds);
+    }, 1000);
+  });
+</script>
+
+</div>

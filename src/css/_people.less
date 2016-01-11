@@ -1,6 +1,10 @@
 .section.people {
-  .section-wrapper {
-    width: inherit;
+  .names {
+    margin-top: 10px;
+  }
+  .hr {
+    margin-top: 150px;
+    margin-bottom: 75px;
   }
   h2 {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -35,6 +39,42 @@
       font-weight: lighter;
       text-transform: uppercase;
       letter-spacing: 4px;
+      clear: both;
+    }
+  }
+  .couple {
+    margin-top: 100px;
+  }
+  .poem {
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+    width: 1366px;
+    div {
+      float: left;
+      &.verse {
+        width: 470px;
+        margin: 0;
+        margin-left: 20px;
+        margin-right: 20px;
+        p {
+          font-family: "Edwardian Script ITC";
+          font-size: 35px;
+          letter-spacing: 1px;
+          font-weight: normal;
+          width: 100%;
+          margin-left: 5px;
+          margin-right: 5px;
+          margin-bottom: 15px;
+          margin-top: 0;
+          &.quote-author {
+            margin-top: 79px;
+          }
+        }
+      }
+      &.tree {
+        width: 300px;
+      }
     }
   }
   .picture img {

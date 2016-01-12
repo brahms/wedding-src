@@ -1,6 +1,15 @@
 .section.schedule {
+  .words {
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    position: relative;
+    img {
+      float: left;
+      width: 90px;
+    }
+  }
   .timeline {
-    margin-top: 150px;
     width: 800px;
     .event {
       position: relative;
@@ -34,5 +43,21 @@
     } 
     margin-left: auto;
     margin-right: auto;
+  }
+  .words {
+    img {
+      margin-right: 25px;
+    }
+    font-family: 'Microsoft Himalaya';
+    font-size: 2em;
+    margin-top: 50px;
+    margin-bottom: 0;
+    text-align: justify;
+    p:first-of-type {
+      padding-top: 20px;
+    }
+    p:last-of-type {
+      margin: 0;
+    }
   }
 }

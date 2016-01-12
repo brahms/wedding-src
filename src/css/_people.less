@@ -42,9 +42,6 @@
       clear: both;
     }
   }
-  .couple {
-    margin-top: 100px;
-  }
   .poem {
     margin-right: auto;
     margin-left: auto;
@@ -77,9 +74,11 @@
       }
     }
   }
+  @width: 180;
+  @height: @width*1.4;
   .picture img {
-    height: 280px;
-    width: 200px;
+    height: ~"@{height}px";
+    width: ~"@{width}px";
   }
   .image-row {
     min-width: 800px;
@@ -87,5 +86,9 @@
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 50px;
+  }
+  &.groomsmen,
+  &.bridesmaids {
+    margin-top: 50px;
   }
 }

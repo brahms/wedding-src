@@ -1,44 +1,44 @@
 .section.people {
   .names {
-    margin-top: 10px;
+    margin-top: 10px*@m;
   }
   .hr {
-    margin-top: 150px;
-    margin-bottom: 75px;
+    margin-top: 150px*@m;
+    margin-bottom: 75px*@m;
   }
   h2 {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 49px;
+    font-size: 49px*@m;
     text-transform: uppercase;
-    letter-spacing: 15px;
-    line-height: 40px;
+    letter-spacing: 15px*@m;
+    line-height: 40px*@m;
     font-weight: normal;
   }
   h3 {
     font-family: "Playfair Display", serif;
-    font-size: 35px;
-    letter-spacing: 1px;
+    font-size: 35px*@m;
+    letter-spacing: 1px*@m;
     font-weight: normal;
   }
   p {
     font-family: 'Playfair Display', serif;
-    font-size: 22.4px; 
-    letter-spacing: 1px;
-    line-height: 33.6px; 
+    font-size: 22.4px*@m; 
+    letter-spacing: 1px*@m;
+    line-height: 33.6px*@m; 
     text-align: center;
     width: 50%;
     margin-left: auto;
     margin-right: auto;
   }
   .people {
-    margin-bottom: 100px;
+    margin-bottom: 100px*@m;
     .name {
       //font-family: 'Edwardian Script ITC';
       font-family: 'Helvetica';
-      font-size: 20px; 
+      font-size: 20px*@m; 
       font-weight: lighter;
       text-transform: uppercase;
-      letter-spacing: 4px;
+      letter-spacing: 4px*@m;
       clear: both;
     }
   }
@@ -46,49 +46,52 @@
     margin-right: auto;
     margin-left: auto;
     position: relative;
-    width: 1366px;
+    width: 1366px*@m;
     div {
       float: left;
       &.verse {
-        width: 470px;
+        width: 470px*@m;
         margin: 0;
-        margin-left: 20px;
-        margin-right: 20px;
+        margin-left: 20px*@m;
+        margin-right: 20px*@m;
         p {
           font-family: "Edwardian Script ITC";
-          font-size: 35px;
-          letter-spacing: 1px;
+          font-size: 35px*@m;
+          letter-spacing: 1px*@m;
           font-weight: normal;
           width: 100%;
-          margin-left: 5px;
-          margin-right: 5px;
-          margin-bottom: 15px;
+          margin-left: 5px*@m;
+          margin-right: 5px*@m;
+          margin-bottom: 15px*@m;
           margin-top: 0;
           &.quote-author {
-            margin-top: 79px;
+            margin-top: 79px*@m;
           }
         }
       }
       &.tree {
-        width: 300px;
+        width: 300px*@m;
+        img {
+          width: 300px*@m;
+        }
       }
     }
   }
-  @width: 180;
+  @width: 180*@m;
   @height: @width*1.4;
   .picture img {
     height: ~"@{height}px";
     width: ~"@{width}px";
   }
   .image-row {
-    min-width: 800px;
-    max-width: 1200px;
+    min-width: 800px*@m;
+    max-width: 1200px*@m;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 50px;
+    margin-bottom: 50px*@m;
   }
   &.groomsmen,
   &.bridesmaids {
-    margin-top: 50px;
+    margin-top: 50px*@m;
   }
 }

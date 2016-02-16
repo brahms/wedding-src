@@ -2,6 +2,12 @@
 .section.home {
   background-image: url(/images/home.jpg);
   background-position: 0 50px*@m;
+  @media (max-width: 1075px) and (min-width: 871px) {
+    background-position: -200px 50px*@m;
+  }
+  @media (max-width: 870px) {
+    background-position: -300px 50px*@m;
+  }
   color: black;
   h1 {
     text-transform: uppercase;

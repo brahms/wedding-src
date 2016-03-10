@@ -110,3 +110,17 @@ body {
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(255,0,0,0.4); 
 }
+
+.fp-controlArrow {
+  border-color: transparent #FFBBBB transparent #FFBBBB !important;
+  @multiplier: 0.7;
+  &.fp-next {
+        border-width: 38.5px*@multiplier 0 38.5px*@multiplier 34px*@multiplier !important;
+  }
+  &.fp-prev {
+      border-width: 38.5px*@multiplier 34px*@multiplier 38.5px*@multiplier 0 !important;
+  }
+}
+.fp-slidesNav.bottom {
+  display: none !important;
+}

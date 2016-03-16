@@ -51,7 +51,8 @@
       status: null,
       dateName: null,
       accomodations: null,
-      song: null
+      song: null,
+      wantsDate: false
     },
     wantsDate = undefined,
     rsvp = null;
@@ -105,6 +106,7 @@
       minimumResultsForSearch: Infinity
     }).on('change', function(data) {
       wantsDate = data.target.value === 'yes';
+      formValues.wantsDate = wantsDate;
       update();
     });
     $('.section.rsvp .submit').click(function() {
@@ -145,7 +147,10 @@
         $('.section.rsvp .submit').removeClass('pure-button-disabled');
     }
     function updateSubmit() {
-      if (rsvp && formValues.name && formValues.status) {
+      if (rsvp && 
+        formValues.name && 
+        formValues.status && 
+        (!rsvp.hasDate || !(typeof wantsDate === 'undefined'))) {
         enableSubmit();
       } else {
         disableSubmit();
@@ -170,10 +175,11 @@
     function transformFormToGoogleDocs(formValues) {
       return {
         "entry.267983249": formValues.name,
-        "entry.1688268929": formValues.dateName || "",
+        "entry.1688268929": rsvp.hasDate ? (formValues.dateName || ""): "",
         "entry.71739064": formValues.status === 'attending' ? 'yes' : 'no',
         "entry.756229184": formValues.song || "",
-        "entry.103264076": formValues.accomodations || ""
+        "entry.103264076": formValues.accomodations || "",
+        "entry.1692357972": rsvp.hasDate && formValues.wantsDate ? 'yes' : 'no'
       };
     }
     function updateDate() {

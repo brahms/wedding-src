@@ -150,7 +150,7 @@
       if (rsvp && 
         formValues.name && 
         formValues.status && 
-        (!rsvp.hasDate || !(typeof wantsDate === 'undefined'))) {
+        (formValues.status !== 'attending' || !rsvp.hasDate || !(typeof wantsDate === 'undefined'))) {
         enableSubmit();
       } else {
         disableSubmit();

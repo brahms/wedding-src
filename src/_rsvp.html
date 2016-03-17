@@ -89,7 +89,7 @@
     }).on('change', function(data) {
         if (!data.target.value) return;
         var id = parseInt(data.target.value, 10);
-        rsvp = rsvpList.find(function(rsvp) { return rsvp.id === id });
+        rsvp = _.find(rsvpList, function(rsvp) { return rsvp.id === id });
         formValues.name = rsvp.text;
         update();
     });

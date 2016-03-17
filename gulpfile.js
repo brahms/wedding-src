@@ -64,6 +64,7 @@ gulp.task('watch', ['build', 'webserver'], () => {
 gulp.task('webserver', function() {
   gulp.src('dist')
     .pipe(webserver({
+      host: "0.0.0.0",
       open: false,
       directoryListing: false
     }));
